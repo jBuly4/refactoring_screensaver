@@ -1,11 +1,47 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import pygame
-import random
-import math
+# import pygame
+# import random
+# import math
 
 SCREEN_DIM = (800, 600)
+
+''' Here starts refactored code
+    Usable links:
+    https://pythonworld.ru/osnovy/peregruzka-operatorov.html - here some information about methods and their overload
+'''
+
+
+class Vec2d:
+    def __init__(self, x,  y):
+        self.x = x
+        self.y = y
+
+    def __add__(self, other):
+        """Returns sum of two vectors """
+        return Vec2d(self.x + other.x, self.y + other.y)
+
+    def __sub__(self, other):
+        """" Returns subtraction between vectors """
+        return Vec2d(self.x - other.x, self.y - other.y)
+
+    def __mul__(self, num):
+        """ Returns multiplication between number and vector """
+        return Vec2d(self.x * num, self.y * num)
+
+    def __len__(self):
+        """ Returns length of vector """
+        return math.sqrt(self.x * self.x + self.y * self.y)
+
+    def int_pair(self):
+        """ Returns coordinates of vector """
+        return (self.x, self.y)
+
+    def __str__(self):
+        return f'({self.x}, {self.y})'
+
+
 
 
 # =======================================================================================
