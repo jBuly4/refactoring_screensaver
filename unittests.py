@@ -1,58 +1,62 @@
 import unittest
+import math
 from screen import Vec2d
 
-class TestFactorize(unittest.TestCase):
+class TestVec2d(unittest.TestCase):
     def test_wrong_construction(self):
-        cases = ['string', 1.5]
+        ''' Testing for wrong type of input '''
+        cases = [['string', 'string']]
         for case in cases:
             with self.subTest(x=case):
-                self.assertRaises(TypeError, factorize, case)
+                self.assertRaises(ValueError, Vec2d, *case)
 
-    def test_negative(self):
-        cases = [-1, -10, -100]
-        for case in cases:
-            with self.subTest(x=case):
-                self.assertRaises(ValueError, factorize, case)
+    def test_add(self):
+        ''' Testing sum of two vectors '''
+        cases = [
+                [[0, 0], [1, 1], [1, 1]],
+                [[-1, -1], [1, 1], [0, 0]],
+                [[1.5, 1.5], [0, 0], [1.5, 1.5]],
+                [[-1, 4], [2, -5], [1, -1]]
+                ]
+        for one, two, expected in cases:
+            with self.subTest(x=one):
+                self.assertEqual(Vec2d(*one) + Vec2d(*two), Vec2d(*expected))
 
-    def test_zero_and_one_cases(self):
-        cases = [0, 1]
-        counter = 0
-        answers = [(0,), (1,)]
-        for case in cases:
-            with self.subTest(x=case):
-                res = factorize(case)
-                self.assertEqual(res, answers[counter])
-            counter += 1
+    def test_sub(self):
+        ''' Testing subtraction of two vectors '''
+        cases = [
+                [[0, 0], [1, 1], [-1, -1]],
+                [[-1, -1], [1, 1], [-2, -2]],
+                [[1.5, 1.5], [0, 0], [1.5, 1.5]],
+                [[-1, 4], [2, -5], [-3, 9]]
+                ]
+        for one, two, expected in cases:
+            with self.subTest(x=one):
+                self.assertEqual(Vec2d(*one) - Vec2d(*two), Vec2d(*expected))
 
-    def test_simple_numbers(self):
-        cases = [3, 13, 29]
-        counter = 0
-        answers = [(3,), (13,), (29,)]
-        for case in cases:
-            with self.subTest(x=case):
-                res = factorize(case)
-                self.assertEqual(res, answers[counter])
-            counter += 1
+    def test_mul(self):
+        ''' Testing multiplication with a number '''
+        cases = [
+                [[0, 0], 1, [0, 0]],
+                [[-1, -1], 0, [0, 0]],
+                [[1.5, 1.5], 2, [3, 3]],
+                [[-1, 4], -5, [5, -20]]
+                ]
+        for one, two, expected in cases:
+            with self.subTest(x=one):
+                self.assertEqual(Vec2d(*one) * two, Vec2d(*expected))
 
-    def test_two_simple_multipliers(self):
-        cases = [6, 26, 121]
-        counter = 0
-        answers = [(2, 3), (2, 13), (11, 11)]
-        for case in cases:
-            with self.subTest(x=case):
-                res = factorize(case)
-                self.assertEqual(res, answers[counter])
-            counter += 1
-
-    def test_many_multipliers(self):
-        cases = [1001, 9699690]
-        counter = 0
-        answers = [(7, 11, 13), (2, 3, 5, 7, 11, 13, 17, 19)]
-        for case in cases:
-            with self.subTest(x=case):
-                res = factorize(case)
-                self.assertEqual(res, answers[counter])
-            counter += 1
+    def test_length(self):
+        ''' Testing length of vector '''
+        cases = [
+                [[0, 0], 0],
+                [[-1, -1], math.sqrt(2)],
+                [[1.5, 1.5], math.sqrt(2 * 1.5**2)],
+                [[-1, 4], math.sqrt(17)]
+                ]
+        for one, expected in cases:
+            with self.subTest(x=one):
+                self.assertEqual(Vec2d(*one).__len__(), expected)
 
 # unittest.main()
 

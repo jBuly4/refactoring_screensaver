@@ -7,9 +7,11 @@
 
 SCREEN_DIM = (800, 600)
 
-''' Here starts refactored code
+'''
+    Here starts refactored code
     Usable links:
     https://pythonworld.ru/osnovy/peregruzka-operatorov.html - here some information about methods and their overload
+    
 '''
 
 
