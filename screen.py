@@ -3,7 +3,7 @@
 
 # import pygame
 # import random
-# import math
+import math
 
 SCREEN_DIM = (800, 600)
 
@@ -11,14 +11,18 @@ SCREEN_DIM = (800, 600)
     Here starts refactored code
     Usable links:
     https://pythonworld.ru/osnovy/peregruzka-operatorov.html - here some information about methods and their overload
-    
+
 '''
 
 
 class Vec2d:
+    ''' Class for 2-dimensinal vectors '''
     def __init__(self, x,  y):
-        self.x = x
-        self.y = y
+        try:
+            self.x = int(x)
+            self.y = int(y)
+        except:
+            raise(ValueError)
 
     def __add__(self, other):
         """Returns sum of two vectors """
@@ -33,8 +37,8 @@ class Vec2d:
         return Vec2d(self.x * num, self.y * num)
 
     def __len__(self):
-        """ Returns length of vector """
-        return math.sqrt(self.x * self.x + self.y * self.y)
+        """ Returns length of vector (integer!) """
+        return int(math.sqrt(self.x * self.x + self.y * self.y))
 
     def int_pair(self):
         """ Returns coordinates of vector """
@@ -43,37 +47,45 @@ class Vec2d:
     def __str__(self):
         return f'({self.x}, {self.y})'
 
+    def __eq__(self, other):
+        return (self.x == other.x, self.y == other.y)
+
+
+class Polyline:
+    ''' Class for closed curves '''
+
+
 
 
 
 # =======================================================================================
 # Функции для работы с векторами
 # =======================================================================================
-
-def sub(x, y):
-    """"возвращает разность двух векторов"""
-    return x[0] - y[0], x[1] - y[1]
-
-
-def add(x, y):
-    """возвращает сумму двух векторов"""
-    return x[0] + y[0], x[1] + y[1]
-
-
-def length(x):
-    """возвращает длину вектора"""
-    return math.sqrt(x[0] * x[0] + x[1] * x[1])
-
-
-def mul(v, k):
-    """возвращает произведение вектора на число"""
-    return v[0] * k, v[1] * k
-
-
-def vec(x, y):
-    """возвращает пару координат, определяющих вектор (координаты точки конца вектора),
-    координаты начальной точки вектора совпадают с началом системы координат (0, 0)"""
-    return sub(y, x)
+#
+# def sub(x, y):
+#     """"возвращает разность двух векторов"""
+#     return x[0] - y[0], x[1] - y[1]
+#
+#
+# def add(x, y):
+#     """возвращает сумму двух векторов"""
+#     return x[0] + y[0], x[1] + y[1]
+#
+#
+# def length(x):
+#     """возвращает длину вектора"""
+#     return math.sqrt(x[0] * x[0] + x[1] * x[1])
+#
+#
+# def mul(v, k):
+#     """возвращает произведение вектора на число"""
+#     return v[0] * k, v[1] * k
+#
+#
+# def vec(x, y):
+#     """возвращает пару координат, определяющих вектор (координаты точки конца вектора),
+#     координаты начальной точки вектора совпадают с началом системы координат (0, 0)"""
+#     return sub(y, x)
 
 
 # =======================================================================================

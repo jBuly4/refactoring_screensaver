@@ -15,7 +15,6 @@ class TestVec2d(unittest.TestCase):
         cases = [
                 [[0, 0], [1, 1], [1, 1]],
                 [[-1, -1], [1, 1], [0, 0]],
-                [[1.5, 1.5], [0, 0], [1.5, 1.5]],
                 [[-1, 4], [2, -5], [1, -1]]
                 ]
         for one, two, expected in cases:
@@ -27,7 +26,6 @@ class TestVec2d(unittest.TestCase):
         cases = [
                 [[0, 0], [1, 1], [-1, -1]],
                 [[-1, -1], [1, 1], [-2, -2]],
-                [[1.5, 1.5], [0, 0], [1.5, 1.5]],
                 [[-1, 4], [2, -5], [-3, 9]]
                 ]
         for one, two, expected in cases:
@@ -39,7 +37,6 @@ class TestVec2d(unittest.TestCase):
         cases = [
                 [[0, 0], 1, [0, 0]],
                 [[-1, -1], 0, [0, 0]],
-                [[1.5, 1.5], 2, [3, 3]],
                 [[-1, 4], -5, [5, -20]]
                 ]
         for one, two, expected in cases:
@@ -50,15 +47,14 @@ class TestVec2d(unittest.TestCase):
         ''' Testing length of vector '''
         cases = [
                 [[0, 0], 0],
-                [[-1, -1], math.sqrt(2)],
-                [[1.5, 1.5], math.sqrt(2 * 1.5**2)],
-                [[-1, 4], math.sqrt(17)]
+                [[-1, -1], int(math.sqrt(2))],
+                [[-1, 4], int(math.sqrt(17))]
                 ]
         for one, expected in cases:
             with self.subTest(x=one):
                 self.assertEqual(Vec2d(*one).__len__(), expected)
 
-# unittest.main()
+unittest.main()
 
 '''
 solution
