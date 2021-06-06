@@ -53,6 +53,65 @@ class Vec2d:
 
 class Polyline:
     ''' Class for closed curves '''
+    def __init__(self):
+        self.points_lst = []
+        self.speeds_lst = []
+
+    def new_point(self, x, y):
+        """ Adding new point """
+        self.points_lst.append(Vec2d(x, y))
+        self.speeds_lst.append(Vec2d(random.random() * 2, random.random() * 2))
+
+    def set_points(self):
+        """ Recalculating points coordinates """
+        for indx in range(len(self.points_lst)):
+            points = self.points_lst[indx] + self.speeds_lst[indx]
+            if points.x > SCREEN_DIM[0] or points.x < 0:
+                self.speeds_lst[indx] = Vec2d(-self.speeds_lst[indx].x,
+                self.speeds_lst[indx].y)
+            if points.y > SCREEN_DIM[1] or points.y < 0:
+                self.speeds_lst[indx] = Vec2d(self.speeds_lst[indx].x,
+                -self.speeds_lst[indx].y)
+
+    def draw_points(self, style="points", width=3, color=(255, 255, 255)):
+        """ Drawing of broken curve """
+        if style == "line":
+            for p_n in range(-1, len(self.points_lst) - 1):
+                pygame.draw.line(gameDisplay, color,
+                                self.points_lst[p_n].int_pair(),
+                                self.points_lst[p_n + 1].int_pair(), width)
+        elif style == "points":
+            for p in self.points_lst:
+                pygame.draw.circle(gameDisplay, color, p.int_pair(), width)
+
+
+class Knot(Polyline):
+    """ Class Knot """
+    def get_knot(self, count):
+        if len(self.points_lst) < 3:
+            return []
+        ref_points = []
+        for i in range(-2, len(self.points_lst) - 2):
+            ptn = []
+            ptn.append((self.points_lst[i] + self.points_lst[i + 1]) * 0.5)
+            ptn.append(self.points_lst[i + 1])
+            ptn.append((self.points_lst[i + 1] + points[i + 2]) * 0.5)
+            ref_points.extend(self.get_points(ptn, count))
+        return ref_points
+
+    def get_points(self, base_points, count):
+        alpha = 1 / count
+        res = []
+        for i in range(count):
+            res.append(self.get_point(base_points, i * alpha))
+        return res
+
+    def get_point(self, base_points, alpha, deg=None):
+        if deg is None:
+            deg = len(base_points) - 1
+        if deg == 0:
+            return base_points[0]
+        return (base_points[deg] * alpha) + self.get_point(base_points, alpha, deg - 1) * (1 - alpha)
 
 
 
@@ -91,18 +150,18 @@ class Polyline:
 # =======================================================================================
 # Функции отрисовки
 # =======================================================================================
-def draw_points(points, style="points", width=3, color=(255, 255, 255)):
-    """функция отрисовки точек на экране"""
-    if style == "line":
-        for p_n in range(-1, len(points) - 1):
-            pygame.draw.line(gameDisplay, color,
-                             (int(points[p_n][0]), int(points[p_n][1])),
-                             (int(points[p_n + 1][0]), int(points[p_n + 1][1])), width)
-
-    elif style == "points":
-        for p in points:
-            pygame.draw.circle(gameDisplay, color,
-                               (int(p[0]), int(p[1])), width)
+# def draw_points(points, style="points", width=3, color=(255, 255, 255)):
+#     """функция отрисовки точек на экране"""
+#     if style == "line":
+#         for p_n in range(-1, len(points) - 1):
+#             pygame.draw.line(gameDisplay, color,
+#                              (int(points[p_n][0]), int(points[p_n][1])),
+#                              (int(points[p_n + 1][0]), int(points[p_n + 1][1])), width)
+#
+#     elif style == "points":
+#         for p in points:
+#             pygame.draw.circle(gameDisplay, color,
+#                                (int(p[0]), int(p[1])), width)
 
 
 def draw_help():
@@ -161,14 +220,14 @@ def get_knot(points, count):
     return res
 
 
-def set_points(points, speeds):
-    """функция перерасчета координат опорных точек"""
-    for p in range(len(points)):
-        points[p] = add(points[p], speeds[p])
-        if points[p][0] > SCREEN_DIM[0] or points[p][0] < 0:
-            speeds[p] = (- speeds[p][0], speeds[p][1])
-        if points[p][1] > SCREEN_DIM[1] or points[p][1] < 0:
-            speeds[p] = (speeds[p][0], -speeds[p][1])
+# def set_points(points, speeds):
+#     """функция перерасчета координат опорных точек"""
+#     for p in range(len(points)):
+#         points[p] = add(points[p], speeds[p])
+#         if points[p][0] > SCREEN_DIM[0] or points[p][0] < 0:
+#             speeds[p] = (- speeds[p][0], speeds[p][1])
+#         if points[p][1] > SCREEN_DIM[1] or points[p][1] < 0:
+#             speeds[p] = (speeds[p][0], -speeds[p][1])
 
 
 # =======================================================================================
@@ -181,8 +240,8 @@ if __name__ == "__main__":
 
     steps = 35
     working = True
-    points = []
-    speeds = []
+    # points = []
+    # speeds = []
     show_help = False
     pause = True
 
@@ -196,10 +255,10 @@ if __name__ == "__main__":
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     working = False
-                if event.key == pygame.K_r:
+                if event.key == pygame.K_r: # key r
                     points = []
                     speeds = []
-                if event.key == pygame.K_p:
+                if event.key == pygame.K_p: # key p
                     pause = not pause
                 if event.key == pygame.K_KP_PLUS:
                     steps += 1
@@ -209,8 +268,8 @@ if __name__ == "__main__":
                     steps -= 1 if steps > 1 else 0
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                points.append(event.pos)
-                speeds.append((random.random() * 2, random.random() * 2))
+                # points.append(event.pos)
+                # speeds.append((random.random() * 2, random.random() * 2))
 
         gameDisplay.fill((0, 0, 0))
         hue = (hue + 1) % 360
