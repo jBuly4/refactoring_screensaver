@@ -78,20 +78,20 @@ class Polyline:
                 self.speeds_lst[indx] = Vec2d(self.speeds_lst[indx].x,
                 -self.speeds_lst[indx].y)
 
-    def draw_points(self, style="points", width=3, color=(255, 255, 255)):
-        """ Drawing of broken curve """
-        # should I recieve gameDisplay or take it from instance of another class?
+    # @staticmethod
+    def draw_points(self, points, style="points", width=3, color=(255, 255, 255)):
+        """ Drawing broken curve """
         if style == "line":
-            for p_n in range(-1, len(self.points_lst) - 1):
-                pygame.draw.line(ScreenSaver.gameDisplay, color,
-                                self.points_lst[p_n].int_pair(),
-                                self.points_lst[p_n + 1].int_pair(), width)
+            for p_n in range(-1, len(points) - 1):
+                pygame.draw.line(ScreenSaver().gameDisplay, color,
+                                points[p_n].int_pair(),
+                                points[p_n + 1].int_pair(), width)
         elif style == "points":
-            for p in self.points_lst:
-                pygame.draw.circle(ScreenSaver.gameDisplay, color, p.int_pair(), width)
+            for p in points:
+                pygame.draw.circle(ScreenSaver().gameDisplay, color, p.int_pair(), width)
 
-    def change_speed(self, insrease=True):
-        """ Increasing or Decreasing speed """
+    def change_speed(self, increase=True):
+        """ Method for Increasing or Decreasing speed """
         for i in self.speeds_lst:
             if increase:
                 i = i * (1 + 0.5)
@@ -101,6 +101,9 @@ class Polyline:
 
 class Knot(Polyline):
     """ Class Knot """
+    def __init__(self):
+        super().__init__()
+
     def get_knot(self, count):
         if len(self.points_lst) < 3:
             return []
@@ -109,7 +112,7 @@ class Knot(Polyline):
             ptn = []
             ptn.append((self.points_lst[i] + self.points_lst[i + 1]) * 0.5)
             ptn.append(self.points_lst[i + 1])
-            ptn.append((self.points_lst[i + 1] + points[i + 2]) * 0.5)
+            ptn.append((self.points_lst[i + 1] + self.points_lst[i + 2]) * 0.5)
             ref_points.extend(self.get_points(ptn, count))
         return ref_points
 
@@ -133,28 +136,28 @@ class HelpScreen:
     def __init__(self):
         self.data = [
                     ["F1", "Show Help"],
-                    ["R", "Restart"]
+                    ["R", "Restart"],
                     ["P", "Pause/Play"],
-                    "Num+", "More points"],
+                    ["Num+", "More points"],
                     ["Num-", "Less points"],
                     ["I", "Increase speed"],
                     ["D", "Decrease speed"],
-                    ["Del, Delete last point"],
+                    ["Del", "Delete last point"],
                     ["", ""],
-                    [str(steps), "Current points"]
+                    [str(ScreenSaver().steps), "Current points"]
                     ]
-        gameDisplay.fill((50, 50, 50))
+        ScreenSaver().gameDisplay.fill((50, 50, 50))
         self.font1 = pygame.font.SysFont("courier", 24)
         self.font2 = pygame.font.SysFont("serif", 24)
 
     def draw_help(self):
         """ Drawing screen of Help """
-        pygame.draw.lines(ScreenSaver.gameDisplay, (255, 50, 50, 255), True, [
+        pygame.draw.lines(ScreenSaver().gameDisplay, (255, 50, 50, 255), True, [
             (0, 0), (800, 0), (800, 600), (0, 600)], 5)
         for i, text in enumerate(self.data):
-            ScreenSaver.gameDisplay.blit(self.font1.render(
+            ScreenSaver().gameDisplay.blit(self.font1.render(
                 text[0], True, (128, 128, 255)), (100, 100 + 30 * i))
-            ScreenSaver.gameDisplay.blit(self.font2.render(
+            ScreenSaver().gameDisplay.blit(self.font2.render(
                 text[1], True, (128, 128, 255)), (200, 100 + 30 * i))
 
 
@@ -173,8 +176,8 @@ class ScreenSaver:
         self.color = pygame.Color(0)
 
     def run(self):
-        """ runs screensaver """
-        while working:
+        """ Start running screensaver """
+        while self.working:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.working = False
@@ -205,11 +208,12 @@ class ScreenSaver:
             self.gameDisplay.fill((0, 0, 0))
             self.hue = (self.hue + 1) % 360
             self.color.hsla = (self.hue, 100, 50, 100)
-            self.knot.draw_points()
+            self.knot.draw_points(self.knot.points_lst)
             self.knot.draw_points(self.knot.get_knot(self.steps), "line", 3, self.color)
+
             if not self.pause:
                 self.knot.set_points()
-            if show_help:
+            if self.show_help:
                 HelpScreen().draw_help()
 
             pygame.display.flip()
