@@ -13,7 +13,7 @@ SCREEN_DIM = (800, 600)
     https://pythonworld.ru/osnovy/peregruzka-operatorov.html - here some information about methods and their overload
 
 '''
-
+# actual file
 
 class Vec2d:
     ''' Class for 2-dimensinal vectors '''
@@ -190,34 +190,34 @@ def draw_help():
 # =======================================================================================
 # Функции, отвечающие за расчет сглаживания ломаной
 # =======================================================================================
-def get_point(points, alpha, deg=None):
-    if deg is None:
-        deg = len(points) - 1
-    if deg == 0:
-        return points[0]
-    return add(mul(points[deg], alpha), mul(get_point(points, alpha, deg - 1), 1 - alpha))
-
-
-def get_points(base_points, count):
-    alpha = 1 / count
-    res = []
-    for i in range(count):
-        res.append(get_point(base_points, i * alpha))
-    return res
-
-
-def get_knot(points, count):
-    if len(points) < 3:
-        return []
-    res = []
-    for i in range(-2, len(points) - 2):
-        ptn = []
-        ptn.append(mul(add(points[i], points[i + 1]), 0.5))
-        ptn.append(points[i + 1])
-        ptn.append(mul(add(points[i + 1], points[i + 2]), 0.5))
-
-        res.extend(get_points(ptn, count))
-    return res
+# def get_point(points, alpha, deg=None):
+#     if deg is None:
+#         deg = len(points) - 1
+#     if deg == 0:
+#         return points[0]
+#     return add(mul(points[deg], alpha), mul(get_point(points, alpha, deg - 1), 1 - alpha))
+#
+#
+# def get_points(base_points, count):
+#     alpha = 1 / count
+#     res = []
+#     for i in range(count):
+#         res.append(get_point(base_points, i * alpha))
+#     return res
+#
+#
+# def get_knot(points, count):
+#     if len(points) < 3:
+#         return []
+#     res = []
+#     for i in range(-2, len(points) - 2):
+#         ptn = []
+#         ptn.append(mul(add(points[i], points[i + 1]), 0.5))
+#         ptn.append(points[i + 1])
+#         ptn.append(mul(add(points[i + 1], points[i + 2]), 0.5))
+#
+#         res.extend(get_points(ptn, count))
+#     return res
 
 
 # def set_points(points, speeds):
