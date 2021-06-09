@@ -42,7 +42,7 @@ class Vec2d:
 
     def int_pair(self):
         """ Returns coordinates of vector """
-        return (self.x, self.y)
+        return (int(self.x), int(self.y))
 
     def __str__(self):
         return f'({self.x}, {self.y})'
@@ -60,7 +60,7 @@ class Polyline:
     def new_point(self, x, y):
         """ Adding new point """
         self.points_lst.append(Vec2d(x, y))
-        self.speeds_lst.append(Vec2d(random.random() * 2, random.random() * 2))
+        self.speeds_lst.append(Vec2d(random.random() * 20, random.random() * 20))
 
     def del_point(self):
         """ Delete last point """
@@ -71,15 +71,17 @@ class Polyline:
         """ Recalculating points coordinates """
         for indx in range(len(self.points_lst)):
             points = self.points_lst[indx] + self.speeds_lst[indx]
-            if points.x > SCREEN_DIM[0] or points.x < 0:
+            if (points.x > SCREEN_DIM[0]) or (points.x < 0):
                 self.speeds_lst[indx] = Vec2d(-self.speeds_lst[indx].x,
                 self.speeds_lst[indx].y)
-            if points.y > SCREEN_DIM[1] or points.y < 0:
+            if (points.y > SCREEN_DIM[1]) or (points.y < 0):
                 self.speeds_lst[indx] = Vec2d(self.speeds_lst[indx].x,
                 -self.speeds_lst[indx].y)
 
-    # @staticmethod
-    def draw_points(self, points, style="points", width=3, color=(255, 255, 255)):
+            self.points_lst[indx] = points # that need to move line and points
+
+    @staticmethod
+    def draw_points(points, style="points", width=3, color=(255, 255, 255)):
         """ Drawing broken curve """
         if style == "line":
             for p_n in range(-1, len(points) - 1):
@@ -92,11 +94,11 @@ class Polyline:
 
     def change_speed(self, increase=True):
         """ Method for Increasing or Decreasing speed """
-        for i in self.speeds_lst:
+        for i, speed in enumerate(self.speeds_lst):
             if increase:
-                i = i * (1 + 0.5)
+                self.speeds_lst[i] = self.speeds_lst[i] * 1.5
             else:
-                i = i * 0.5
+                self.speeds_lst[i] = self.speeds_lst[i] * 0.95
 
 
 class Knot(Polyline):
@@ -197,7 +199,8 @@ class ScreenSaver:
                     if event.key == pygame.K_i:
                         self.knot.change_speed()
                     if event.key == pygame.K_d:
-                        self.knot.change_speed(False)
+                        decrease = False
+                        self.knot.change_speed(decrease)
                     if event.key == pygame.K_DELETE:
                         self.knot.del_point()
 
